@@ -2,14 +2,19 @@
 
 import DeployPluginModal from '@/app/components/DeployPluginModal'
 import NavBar from '@/app/components/NavBar'
+import useGetEnabledPlugins from '@/app/hooks/useGetEnabledPlugins'
+import useGetPluginsName from '@/app/hooks/useGetPluginsName'
 import { DeadManSwitchProps, ResponseWithPlugin, SocialRecoveryProps } from '@/app/models/plugins'
+import { useAccountAbstraction } from '@/app/store/accountAbstractionContext'
+import getChain from '@/app/utils/getChain'
 import sendMessage from '@/app/utils/sendMessage'
 import { Button, Textarea } from '@nextui-org/react'
 import OpenAI from 'openai'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { IoMdOpen } from 'react-icons/io'
 
 export default function SafePage({ params }: { params: { id: string } }) {
+  const { chainId } = useAccountAbstraction()
   const safeAddress = params.id.split('-')[1]
   const chainShortName = params.id.split('-')[0]
   const [currentMessage, setCurrentMessage] = useState('')
@@ -23,6 +28,10 @@ export default function SafePage({ params }: { params: { id: string } }) {
   //   },
   // })
   const [error, setError] = useState<string | null>(null)
+  const { plugins, loading: pluginsLoading } = useGetEnabledPlugins(safeAddress)
+  const { names: pluginNames } = useGetPluginsName(plugins ?? [])
+
+  const chain = useMemo(() => getChain(chainId), [chainId])
 
   const validatePluginJson = (data: ResponseWithPlugin) => {
     switch (data.plugin) {
@@ -62,7 +71,6 @@ export default function SafePage({ params }: { params: { id: string } }) {
         return
       }
       const parsedJson = JSON.parse(aiMessage.content)
-      console.log('parsedJson:', parsedJson, parsedJson.followUp)
       if (parsedJson.followUp) {
         setMessages([...messages, newMessage, aiMessage])
       } else {
@@ -118,6 +126,22 @@ export default function SafePage({ params }: { params: { id: string } }) {
             </a>
           </div>
         </div>
+        {!!plugins?.length && (
+          <div className="mt-8">
+            <strong>Enabled Plugins:</strong>
+            {plugins.map((plugin, i) => (
+              <div key={plugin}>
+                <a
+                  href={chain!.blockExplorerUrl + '/address/0xCFbFaC74C26F8647cBDb8c5caf80BB5b32E43134'}
+                  target="_blank"
+                  rel="noreferrer nofollower"
+                >
+                  {pluginNames[i] ?? plugin}
+                </a>
+              </div>
+            ))}
+          </div>
+        )}
         <div className="mt-8">
           <div className="mt-2">
             {messages.map((message, index) => (
