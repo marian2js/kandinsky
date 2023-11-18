@@ -12,7 +12,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <NextUIProvider>
         <AccountAbstractionProvider>
-          <body className={inter.className}>{children}</body>
+          <body className={`${inter.className} dark`}>{children}</body>
         </AccountAbstractionProvider>
       </NextUIProvider>
     </html>

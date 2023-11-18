@@ -1,10 +1,18 @@
 'use client'
 
 import { Button } from '@nextui-org/react'
+import useCreateSafe from './hooks/useCreateSafe'
 import { useAccountAbstraction } from './store/accountAbstractionContext'
 
 export default function Home() {
-  const { loginWeb3Auth, isAuthenticated, ownerAddress, logoutWeb3Auth } = useAccountAbstraction()
+  const { web3Provider, loginWeb3Auth, isAuthenticated, ownerAddress, logoutWeb3Auth, safes, chainId } =
+    useAccountAbstraction()
+  const { createSafe } = useCreateSafe()
+
+  const handleCreateSafe = async () => {
+    console.log(`Creating a safe...`)
+    await createSafe({ web3Provider, ownerAddress })
+  }
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
@@ -16,11 +24,10 @@ export default function Home() {
         <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
           {isAuthenticated ? (
             <>
-              <>{ownerAddress}</> | (
-              <Button color="primary" onPress={logoutWeb3Auth}>
+              <Button variant="light">{ownerAddress}</Button>
+              <Button variant="light" onPress={logoutWeb3Auth}>
                 Disconnect
               </Button>
-              )
             </>
           ) : (
             <Button color="primary" onPress={loginWeb3Auth}>
@@ -30,13 +37,33 @@ export default function Home() {
         </div>
       </div>
 
-      {isAuthenticated ? (
-        <>Welcome {ownerAddress}.</>
-      ) : (
-        <Button color="primary" onPress={loginWeb3Auth}>
-          Connect
-        </Button>
-      )}
+      <div>
+        {isAuthenticated ? (
+          <>
+            You have {safes.length} safes.
+            <Button onPress={handleCreateSafe}>Create a Safe</Button>
+            {safes.map((safe) => (
+              <div key={safe}>{safe}</div>
+            ))}
+            {/* <Table aria-label="Safe contraacts">
+              <TableHeader>
+                <TableColumn>ADDRESS</TableColumn>
+                <TableColumn>ROLE</TableColumn>
+                <TableColumn>STATUS</TableColumn>
+              </TableHeader>
+              <TableBody>
+                {safes.map((safe) => (
+                  <SafeTableRow key={safe} safeAddress={safe} chainId={chainId} />
+                ))}
+              </TableBody>
+            </Table> */}
+          </>
+        ) : (
+          <>
+            Welcome to Kandinsky. <Button onPress={loginWeb3Auth}>Connect your wallet to get started</Button>
+          </>
+        )}
+      </div>
 
       <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
         <a
