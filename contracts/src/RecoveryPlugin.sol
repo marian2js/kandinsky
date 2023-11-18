@@ -7,14 +7,14 @@ import {ISafeProtocolManager} from "@safe/interfaces/Manager.sol";
 import {SafeTransaction, SafeProtocolAction, SafeRootAccess} from "@safe/DataTypes.sol";
 
 /**
- * @title RecoveryWithDelayPlugin - A contract compatible with Safe{Core} Protocol that replaces a specified owner for a Safe by a non-owner account.
+ * @title Recovery Plugin - A contract compatible with Safe{Core} Protocol that adds a new owner to a Safe account in the event of an emergency.
  * @notice This contract should be listed in a Registry and enabled as a Plugin for an account through a Manager to be able to intiate recovery mechanism.
- * @dev The recovery process is initiated by a recoverer account. The recoverer account is set during the contract deployment in the constructor and cannot be updated.
- *      The recoverer account can initiate the recovery process by calling the createAnnouncement function and later when the delay is over, any account can execute
+ * @dev The recovery process is initiated by a list of recoverer accounts. The recoverers are set by the Safe account owner.
+ *      The recoverers can initiate the recovery process through a voting-based system. Once the voting threshold is crossed, any of the recoverer accounts can execute and
  *      complete the recovery process by calling the executeFromPlugin function.
- * @author Akshay Patel - @akshay-ap
+ * @author SJ - @web3dotsj
  */
-contract RecoveryWithDelayPlugin is BasePluginWithEventMetadata {
+contract RecoveryPlugin is BasePluginWithEventMetadata {
 
     mapping(address => address[]) public recoverers;
     mapping(address => mapping(address=>bool)) public isRecoverer;
@@ -24,17 +24,16 @@ contract RecoveryWithDelayPlugin is BasePluginWithEventMetadata {
     mapping(address => mapping(address => bool)) public hasVoted;
     mapping(address => uint256) numVotes;
 
+    function addRecoverer(address[] calldata recoverers) external {
+        for(uint256 i=0;i<recoverers.length;i++) {
+            recoverers[msg.sender].push(recoverers[i]);
+            isRecoverer[msg.sender][recoverers[i]] = true;
+        }
+    }
 
     function addRecoverer(address recoverer) external {
         recoverers[msg.sender].push(recoverer);
         isRecoverer[msg.sender][recoverer] = true;
-    }
-
-    function vote(address safe) external {
-       require(!hasVoted[safe][msg.sender], "Caller has already voted");
-       voters[safe].push(msg.sender);
-       hasVoted[safe][msg.sender] = true;
-       numVotes[safe]++;
     }
 
     function removeRecoverer(address recoverer) external {
@@ -55,24 +54,20 @@ contract RecoveryWithDelayPlugin is BasePluginWithEventMetadata {
 
     }
 
+    function vote(address safe) external {
+       require(!hasVoted[safe][msg.sender], "Caller has already voted");
+       voters[safe].push(msg.sender);
+       hasVoted[safe][msg.sender] = true;
+       numVotes[safe]++;
+    }
+
     function changeMinimumVotes(uint256 num) external {
         require(num > 0, "Invalid vote count");
         minNumVotes[msg.sender] = num;
     }
 
     // Events
-    event NewRecoveryAnnouncement(address indexed account, bytes32 txHash);
-    event RecoveryAnnouncementCancelled(address indexed account, bytes32 txHash);
     event OwnerAdded(address indexed account, address newOwner);
-
-    // Errors
-    error CallerNotValidRecoverer();
-    error TransactionAlreadyExecuted(bytes32 txHash);
-    error TransactionAlreadyScheduled(bytes32 txHash);
-    error ExecutionTimeShouldBeInFuture();
-    error TransactionNotFound(bytes32 txHash);
-    error TransactionExecutionNotAllowedYet(bytes32 txHash);
-    error TransactionExecutionValidityExpired(bytes32 txHash);
 
     constructor(
     )
