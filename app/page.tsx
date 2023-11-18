@@ -1,42 +1,62 @@
 'use client'
 
 import { Button } from '@nextui-org/react'
+import Link from 'next/link'
+import { useMemo, useState } from 'react'
+import CreateSafeModal from './components/CreateSafeModal'
+import NavBar from './components/NavBar'
 import { useAccountAbstraction } from './store/accountAbstractionContext'
+import getChain from './utils/getChain'
 
 export default function Home() {
-  const { loginWeb3Auth, isAuthenticated, ownerAddress, logoutWeb3Auth } = useAccountAbstraction()
+  const { web3Provider, loginWeb3Auth, isAuthenticated, ownerAddress, safes, chainId } = useAccountAbstraction()
+  const [createSafeModalOpen, setCreateSafeModalOpen] = useState(false)
+
+  const chain = useMemo(() => getChain(chainId), [chainId])
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          {isAuthenticated ? (
-            <>
-              <>{ownerAddress}</> | (
-              <Button color="primary" onPress={logoutWeb3Auth}>
-                Disconnect
-              </Button>
-              )
-            </>
-          ) : (
-            <Button color="primary" onPress={loginWeb3Auth}>
-              Connect
-            </Button>
-          )}
-        </div>
-      </div>
+      <NavBar />
 
-      {isAuthenticated ? (
-        <>Welcome {ownerAddress}.</>
-      ) : (
-        <Button color="primary" onPress={loginWeb3Auth}>
-          Connect
-        </Button>
-      )}
+      <div>
+        {isAuthenticated ? (
+          <>
+            <div className="flex flex-row items-center justify-between">
+              <div>You have {safes.length} safes.</div>
+              <div className="text-right">
+                <Button onPress={() => setCreateSafeModalOpen(true)} isLoading={createSafeModalOpen}>
+                  Create a Safe
+                </Button>
+              </div>
+            </div>
+            <div className="mt-12">
+              {safes.map((safeAddress) => (
+                <div key={safeAddress}>
+                  <Link href={`/safe/${chain?.shortName}-${safeAddress}`} className="underline">
+                    {safeAddress}
+                  </Link>
+                </div>
+              ))}
+            </div>
+            {/* <Table aria-label="Safe contraacts">
+              <TableHeader>
+                <TableColumn>ADDRESS</TableColumn>
+                <TableColumn>ROLE</TableColumn>
+                <TableColumn>STATUS</TableColumn>
+              </TableHeader>
+              <TableBody>
+                {safes.map((safe) => (
+                  <SafeTableRow key={safe} safeAddress={safe} chainId={chainId} />
+                ))}
+              </TableBody>
+            </Table> */}
+          </>
+        ) : (
+          <>
+            Welcome to Kandinsky. <Button onPress={loginWeb3Auth}>Connect your wallet to get started</Button>
+          </>
+        )}
+      </div>
 
       <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
         <a
@@ -105,6 +125,15 @@ export default function Home() {
           </p>
         </a>
       </div>
+
+      {createSafeModalOpen && (
+        <CreateSafeModal
+          chainId={chainId}
+          web3Provider={web3Provider!}
+          ownerAddress={ownerAddress!}
+          onClose={() => setCreateSafeModalOpen(false)}
+        />
+      )}
     </main>
   )
 }

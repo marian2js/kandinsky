@@ -22,6 +22,7 @@ export const goerliChain: Chain = {
   color: '#fbc02d',
   transactionServiceUrl: 'https://safe-transaction-goerli.safe.global',
   isStripePaymentsEnabled: false,
+  managerAddress: '0xAbd9769A78Ee63632A4fb603D85F63b8D3596DF9',
 }
 
 export const mainnetChain: Chain = {
@@ -62,6 +63,6 @@ export const mumbaiChain: Chain = {
 
 const chains: Chain[] = [gnosisChain, goerliChain, mainnetChain, mumbaiChain, polygonChain]
 
-export const initialChain = mumbaiChain
+export const initialChain = goerliChain
 
 export default chains
