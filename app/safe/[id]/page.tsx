@@ -15,13 +15,13 @@ export default function SafePage({ params }: { params: { id: string } }) {
   const [currentMessage, setCurrentMessage] = useState('')
   const [messages, setMessages] = useState<OpenAI.Chat.ChatCompletionMessageParam[]>([])
   const [sendMessageLoading, setSendMessageLoading] = useState(false)
-  // const [pluginJson, setPluginJson] = useState<ResponseWithPlugin | null>(null)
-  const [pluginJson, setPluginJson] = useState<ResponseWithPlugin | null>({
-    plugin: 'socialRecovery',
-    parameters: {
-      contacts: ['0xc0ffee254729296a45a3885639AC7E10F9d54979', '0x999999cf1046e68e36E1aA2E0E07105eDDD1f08E'],
-    },
-  })
+  const [pluginJson, setPluginJson] = useState<ResponseWithPlugin | null>(null)
+  // const [pluginJson, setPluginJson] = useState<ResponseWithPlugin | null>({
+  //   plugin: 'socialRecovery',
+  //   parameters: {
+  //     contacts: ['0xc0ffee254729296a45a3885639AC7E10F9d54979', '0x999999cf1046e68e36E1aA2E0E07105eDDD1f08E'],
+  //   },
+  // })
   const [error, setError] = useState<string | null>(null)
 
   const validatePluginJson = (data: ResponseWithPlugin) => {
@@ -147,7 +147,9 @@ export default function SafePage({ params }: { params: { id: string } }) {
         </div>
       </div>
 
-      {pluginJson && <DeployPluginModal data={pluginJson} onClose={() => setPluginJson(null)} />}
+      {pluginJson && (
+        <DeployPluginModal data={pluginJson} safeAddress={safeAddress} onClose={() => setPluginJson(null)} />
+      )}
     </main>
   )
 }

@@ -1,13 +1,35 @@
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react'
+import { useMemo, useState } from 'react'
+import { enablePlugin } from '../contracts/plugin.contract'
 import { DeadManSwitchProps, ResponseWithPlugin, SocialRecoveryProps } from '../models/plugins'
+import { useAccountAbstraction } from '../store/accountAbstractionContext'
 import camelCaseToWord from '../utils/camelCaseToWord'
+import getChain from '../utils/getChain'
 
 interface Props {
   data: ResponseWithPlugin
+  safeAddress: string
   onClose: () => void
 }
 
-export default function DeployPluginModal({ data, onClose }: Props) {
+export default function DeployPluginModal({ data, safeAddress, onClose }: Props) {
+  const { web3Provider, loginWeb3Auth, isAuthenticated, ownerAddress, safes, chainId } = useAccountAbstraction()
+  const [deployLoading, setDeployLoading] = useState(false)
+  const [deployError, setDeployError] = useState<string | null>(null)
+
+  const chain = useMemo(() => getChain(chainId), [chainId])
+
+  const handleDeploy = async () => {
+    try {
+      setDeployLoading(true)
+      await enablePlugin(web3Provider!, safeAddress, '0x2b18E7246d213676a0b9741fE860c7cC05D75cE2')
+    } catch (e) {
+      setDeployError((e as Error).message)
+    } finally {
+      setDeployLoading(false)
+    }
+  }
+
   const getPluginData = () => {
     switch (data.plugin) {
       case 'socialRecovery':
@@ -46,12 +68,15 @@ export default function DeployPluginModal({ data, onClose }: Props) {
     <Modal isOpen onOpenChange={() => onClose()}>
       <ModalContent>
         <ModalHeader className="flex flex-col gap-1">{camelCaseToWord(data.plugin)}</ModalHeader>
-        <ModalBody>{getPluginData()}</ModalBody>
+        <ModalBody>
+          {deployError && <p className="text-red-500">{deployError}</p>}
+          {getPluginData()}
+        </ModalBody>
         <ModalFooter>
           <Button color="danger" variant="light" onPress={onClose}>
             Close
           </Button>
-          <Button color="primary" onPress={onClose}>
+          <Button color="primary" onPress={handleDeploy} isLoading={deployLoading}>
             Deploy
           </Button>
         </ModalFooter>

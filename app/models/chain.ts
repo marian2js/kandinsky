@@ -10,6 +10,7 @@ type Chain = {
   transactionServiceUrl?: string
   isStripePaymentsEnabled: boolean // only available in Mumbai chain
   faucetUrl?: string
+  managerAddress?: string
 }
 
 export default Chain

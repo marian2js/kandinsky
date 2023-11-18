@@ -28,12 +28,10 @@ export default function useCreateSafe() {
         owners,
         threshold,
       }
-      console.log('safeAccountConfig:', safeAccountConfig)
 
       const safeSdk: Safe = await safeFactory.deploySafe({ safeAccountConfig })
       const newSafeAddress = await safeSdk.getAddress()
 
-      console.log('newSafeAddress:', newSafeAddress)
       return newSafeAddress
     },
     [],

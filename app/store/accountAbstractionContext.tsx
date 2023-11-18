@@ -1,5 +1,6 @@
 'use client'
 
+import Safe from '@safe-global/protocol-kit'
 import { CHAIN_NAMESPACES, WALLET_ADAPTERS } from '@web3auth/base'
 import { Web3AuthOptions } from '@web3auth/modal'
 import { OpenloginAdapter } from '@web3auth/openlogin-adapter'
@@ -35,6 +36,7 @@ type accountAbstractionContextValue = {
   gelatoTaskId?: string
   openStripeWidget: () => Promise<void>
   closeStripeWidget: () => Promise<void>
+  safeSdk?: Safe
 }
 
 const initialState = {
