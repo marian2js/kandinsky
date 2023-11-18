@@ -7,34 +7,28 @@ export default function useCreateSafe() {
     async ({
       web3Provider,
       ownerAddress,
+      owners,
+      threshold,
     }: {
       web3Provider: ethers.providers.Web3Provider | undefined
       ownerAddress: string | undefined
+      owners: string[]
+      threshold: number
     }) => {
       if (!web3Provider || !ownerAddress) {
         return
       }
-      // const provider = new ethers.providers.Web3Provider(web3Provider)
       const safeOwner = web3Provider.getSigner(0)
-      console.log('safeOwner:', safeOwner)
-
       const ethAdapter = new EthersAdapter({
         ethers,
         signerOrProvider: safeOwner,
       })
-
-      console.log('ethAdapter:', ethAdapter)
-
       const safeFactory = await SafeFactory.create({ ethAdapter })
-
-      console.log('safeFactory:', safeFactory)
-
-      const owners = [ownerAddress]
-      const threshold = 1
       const safeAccountConfig: SafeAccountConfig = {
         owners,
         threshold,
       }
+      console.log('safeAccountConfig:', safeAccountConfig)
 
       const safeSdk: Safe = await safeFactory.deploySafe({ safeAccountConfig })
       const newSafeAddress = await safeSdk.getAddress()

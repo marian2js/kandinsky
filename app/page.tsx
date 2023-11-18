@@ -3,29 +3,16 @@
 import { Button } from '@nextui-org/react'
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
+import CreateSafeModal from './components/CreateSafeModal'
 import NavBar from './components/NavBar'
-import useCreateSafe from './hooks/useCreateSafe'
 import { useAccountAbstraction } from './store/accountAbstractionContext'
 import getChain from './utils/getChain'
 
 export default function Home() {
-  const { web3Provider, loginWeb3Auth, isAuthenticated, ownerAddress, logoutWeb3Auth, safes, chainId } =
-    useAccountAbstraction()
-  const { createSafe } = useCreateSafe()
-  const [createLoading, setCreateLoading] = useState(false)
+  const { web3Provider, loginWeb3Auth, isAuthenticated, ownerAddress, safes, chainId } = useAccountAbstraction()
+  const [createSafeModalOpen, setCreateSafeModalOpen] = useState(false)
 
   const chain = useMemo(() => getChain(chainId), [chainId])
-
-  const handleCreateSafe = async () => {
-    setCreateLoading(true)
-    try {
-      await createSafe({ web3Provider, ownerAddress })
-    } catch {
-      console.log('error creating safe')
-    } finally {
-      setCreateLoading(false)
-    }
-  }
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
@@ -35,7 +22,7 @@ export default function Home() {
         {isAuthenticated ? (
           <>
             You have {safes.length} safes.
-            <Button onPress={handleCreateSafe} isLoading={createLoading}>
+            <Button onPress={() => setCreateSafeModalOpen(true)} isLoading={createSafeModalOpen}>
               Create a Safe
             </Button>
             {safes.map((safeAddress) => (
@@ -132,6 +119,15 @@ export default function Home() {
           </p>
         </a>
       </div>
+
+      {createSafeModalOpen && (
+        <CreateSafeModal
+          chainId={chainId}
+          web3Provider={web3Provider!}
+          ownerAddress={ownerAddress!}
+          onClose={() => setCreateSafeModalOpen(false)}
+        />
+      )}
     </main>
   )
 }
