@@ -3,4 +3,15 @@ src = "src"
 out = "out"
 libs = ["lib"]
 
+remappings = [
+    '@safe=src/safe',
+    '@safe-global/safe-core-protocol=lib/safe-core-protocol', 
+    '@safe-contracts=lib/safe-contracts',
+    '@openzeppelin=lib/openzeppelin-contracts',
+    '@gelatonetwork/relay-context/contracts=lib/relay-context-contracts/contracts',
+    '@foundry-devops=lib/foundry-devops',
+    
+    ]
+
+
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config
