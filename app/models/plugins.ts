@@ -8,7 +8,7 @@ export interface ResponseWithFollowUp {
 }
 export interface SocialRecoveryProps {
   contacts: string[]
-  minContacts: number
+  minContacts?: number
 }
 export interface DeadManSwitchProps {
   heir: string

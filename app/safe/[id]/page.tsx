@@ -1,6 +1,7 @@
 'use client'
 
 import chains from '@/app/chains/chains'
+import DeployPluginModal from '@/app/components/DeployPluginModal'
 import NavBar from '@/app/components/NavBar'
 import { DeadManSwitchProps, ResponseWithPlugin, SocialRecoveryProps } from '@/app/models/plugins'
 import sendMessage from '@/app/utils/sendMessage'
@@ -15,7 +16,13 @@ export default function SafePage({ params }: { params: { id: string } }) {
   const [currentMessage, setCurrentMessage] = useState('')
   const [messages, setMessages] = useState<OpenAI.Chat.ChatCompletionMessageParam[]>([])
   const [sendMessageLoading, setSendMessageLoading] = useState(false)
-  const [pluginJson, setPluginJson] = useState<any>({})
+  // const [pluginJson, setPluginJson] = useState<ResponseWithPlugin | null>(null)
+  const [pluginJson, setPluginJson] = useState<ResponseWithPlugin | null>({
+    plugin: 'socialRecovery',
+    parameters: {
+      contacts: ['0xc0ffee254729296a45a3885639AC7E10F9d54979', '0x999999cf1046e68e36E1aA2E0E07105eDDD1f08E'],
+    },
+  })
   const [error, setError] = useState<string | null>(null)
 
   const validatePluginJson = (data: ResponseWithPlugin) => {
@@ -126,6 +133,8 @@ export default function SafePage({ params }: { params: { id: string } }) {
           </Button>
         </div>
       </div>
+
+      {pluginJson && <DeployPluginModal data={pluginJson} onClose={() => setPluginJson(null)} />}
     </main>
   )
 }
