@@ -29,27 +29,35 @@ contract RecoveryPlugin is BasePluginWithEventMetadata {
             recoverers[msg.sender].push(recoverers[i]);
             isRecoverer[msg.sender][recoverers[i]] = true;
         }
+
+        if(minNumVotes[msg.sender]==0) {
+            minNumVotes[msg.sender] = 1;
+        }
     }
 
     function addRecoverer(address recoverer) external {
         recoverers[msg.sender].push(recoverer);
         isRecoverer[msg.sender][recoverer] = true;
+
+        if(minNumVotes[msg.sender]==0) {
+            minNumVotes[msg.sender] = 1;
+        }
     }
 
     function removeRecoverer(address recoverer) external {
         require(isRecoverer[msg.sender][recoverer], "Recoverer does not exist");
         uint256 index = 0;
-        for (uint256 i=0; i < array.length; i++) {
+        for (uint256 i=0; i < recoverers[msg.sender].length; i++) {
             if(recoverers[msg.sender][i]==recoverer) {
                 index = i;
                 break;
             }
         }
 
-        for (uint256 i = index; i < array.length - 1; i++) {
+        for (uint256 i = index; i < recoverers[msg.sender].length - 1; i++) {
             recoverers[msg.sender][i] = recoverers[msg.sender][i + 1];
         }
-        array.pop();
+        recoverers[msg.sender].pop();
         isRecoverer[msg.sender][recoverer] = false;
 
     }
