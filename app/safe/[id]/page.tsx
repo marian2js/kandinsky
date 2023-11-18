@@ -2,6 +2,7 @@
 
 import chains from '@/app/chains/chains'
 import NavBar from '@/app/components/NavBar'
+import { DeadManSwitchProps, ResponseWithPlugin, SocialRecoveryProps } from '@/app/models/plugins'
 import sendMessage from '@/app/utils/sendMessage'
 import { Button, Textarea } from '@nextui-org/react'
 import OpenAI from 'openai'
@@ -17,6 +18,30 @@ export default function SafePage({ params }: { params: { id: string } }) {
   const [pluginJson, setPluginJson] = useState<any>({})
   const [error, setError] = useState<string | null>(null)
 
+  const validatePluginJson = (data: ResponseWithPlugin) => {
+    switch (data.plugin) {
+      case 'socialRecovery':
+        const socialRecoveryData = data.parameters as SocialRecoveryProps
+        if (!Array.isArray(socialRecoveryData.contacts) || !socialRecoveryData.contacts.length) {
+          throw new Error(
+            `Please provide a list of contacts' addresses that you would like to assign as your recovery contacts.`,
+          )
+        }
+        break
+      case 'deadManSwitch':
+        const deadManSwitchData = data.parameters as DeadManSwitchProps
+        if (!deadManSwitchData.heir) {
+          throw new Error(`Please provide an address for your heir.`)
+        }
+        if (!deadManSwitchData.timeToSwitch) {
+          throw new Error(`Please provide a time to switch.`)
+        }
+        break
+      default:
+        throw new Error('I could not undertand your request, please try again.')
+    }
+  }
+
   const handleAddRule = async () => {
     setCurrentMessage('')
     setSendMessageLoading(true)
@@ -25,9 +50,23 @@ export default function SafePage({ params }: { params: { id: string } }) {
     try {
       const result: OpenAI.Chat.ChatCompletion = await sendMessage([...messages, newMessage])
       let aiMessage = result.choices[0].message
-      const parsedJson = JSON.parse(JSON.stringify(aiMessage))
-      setPluginJson(parsedJson)
-      setMessages([...messages, newMessage, aiMessage])
+      if (!aiMessage.content) {
+        setError('Invalid response, please try again.')
+        setSendMessageLoading(false)
+        return
+      }
+      const parsedJson = JSON.parse(aiMessage.content)
+      console.log('parsedJson:', parsedJson, parsedJson.followUp)
+      if (parsedJson.followUp) {
+        setMessages([...messages, newMessage, aiMessage])
+      } else {
+        try {
+          validatePluginJson(parsedJson)
+          setPluginJson(parsedJson)
+        } catch (e) {
+          aiMessage.content = `{ followUp: "${(e as Error).message}" }`
+        }
+      }
       setSendMessageLoading(false)
     } catch (e) {
       console.log(e)

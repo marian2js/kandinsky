@@ -20,8 +20,8 @@ interface ResponseWithFollowUp {
   followUp: string
 }
 interface SocialRecoveryProps {
-  friends: address[]
-  threshold: number // defaults to number of friends
+  contacts: address[]
+  minContacts: number // defaults to number of contacts
 }
 interface DeadManSwitchProps {
   heir: address
