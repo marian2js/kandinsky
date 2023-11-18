@@ -1,6 +1,5 @@
 'use client'
 
-import chains from '@/app/chains/chains'
 import DeployPluginModal from '@/app/components/DeployPluginModal'
 import NavBar from '@/app/components/NavBar'
 import { DeadManSwitchProps, ResponseWithPlugin, SocialRecoveryProps } from '@/app/models/plugins'
@@ -8,11 +7,11 @@ import sendMessage from '@/app/utils/sendMessage'
 import { Button, Textarea } from '@nextui-org/react'
 import OpenAI from 'openai'
 import { useState } from 'react'
+import { IoMdOpen } from 'react-icons/io'
 
 export default function SafePage({ params }: { params: { id: string } }) {
   const safeAddress = params.id.split('-')[1]
   const chainShortName = params.id.split('-')[0]
-  const chain = chains.find((chain) => chain.shortName === chainShortName)
   const [currentMessage, setCurrentMessage] = useState('')
   const [messages, setMessages] = useState<OpenAI.Chat.ChatCompletionMessageParam[]>([])
   const [sendMessageLoading, setSendMessageLoading] = useState(false)
@@ -97,13 +96,27 @@ export default function SafePage({ params }: { params: { id: string } }) {
     return content
   }
 
+  const walletUrl = `https://app.safe.global/home?safe=${chainShortName}:${safeAddress}`
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div>
         <NavBar />
         {error && <div className="mt-8 text-red-500">Something bad happened: {error}</div>}
-        <div className="mt-8 text-center">
-          Smart Wallet: <a href={`https://app.safe.global/home?safe=${chainShortName}:${safeAddress}`}>{safeAddress}</a>
+        <div className="mt-8 flex flex-row gap-2 justify-center items-center">
+          <div>
+            <strong>Smart Wallet</strong>:{' '}
+          </div>
+          <div>
+            <a href={walletUrl} target="_blank" rel="noreferrer nofollower">
+              {safeAddress}
+            </a>
+          </div>
+          <div>
+            <a href={walletUrl} target="_blank" rel="noreferrer nofollower">
+              <IoMdOpen />
+            </a>
+          </div>
         </div>
         <div className="mt-8">
           <div className="mt-2">

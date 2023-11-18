@@ -21,17 +21,23 @@ export default function Home() {
       <div>
         {isAuthenticated ? (
           <>
-            You have {safes.length} safes.
-            <Button onPress={() => setCreateSafeModalOpen(true)} isLoading={createSafeModalOpen}>
-              Create a Safe
-            </Button>
-            {safes.map((safeAddress) => (
-              <div key={safeAddress}>
-                <Link href={`/safe/${chain?.shortName}-${safeAddress}`} className="underline">
-                  {safeAddress}
-                </Link>
+            <div className="flex flex-row items-center justify-between">
+              <div>You have {safes.length} safes.</div>
+              <div className="text-right">
+                <Button onPress={() => setCreateSafeModalOpen(true)} isLoading={createSafeModalOpen}>
+                  Create a Safe
+                </Button>
               </div>
-            ))}
+            </div>
+            <div className="mt-12">
+              {safes.map((safeAddress) => (
+                <div key={safeAddress}>
+                  <Link href={`/safe/${chain?.shortName}-${safeAddress}`} className="underline">
+                    {safeAddress}
+                  </Link>
+                </div>
+              ))}
+            </div>
             {/* <Table aria-label="Safe contraacts">
               <TableHeader>
                 <TableColumn>ADDRESS</TableColumn>
