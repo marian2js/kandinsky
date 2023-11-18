@@ -127,7 +127,7 @@ export default function SafePage({ params }: { params: { id: string } }) {
           </div>
         </div>
         {!!plugins?.length && (
-          <div className="mt-8">
+          <div className="mt-8 text-center">
             <strong>Enabled Plugins:</strong>
             {plugins.map((plugin, i) => (
               <div key={plugin}>

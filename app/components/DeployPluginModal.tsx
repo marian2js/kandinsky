@@ -13,16 +13,18 @@ interface Props {
 }
 
 export default function DeployPluginModal({ data, safeAddress, onClose }: Props) {
-  const { web3Provider, loginWeb3Auth, isAuthenticated, ownerAddress, safes, chainId } = useAccountAbstraction()
+  const { web3Provider, chainId } = useAccountAbstraction()
   const [deployLoading, setDeployLoading] = useState(false)
   const [deployError, setDeployError] = useState<string | null>(null)
+  const [deploySucceded, setDeploySucceded] = useState(false)
 
   const chain = useMemo(() => getChain(chainId), [chainId])
 
   const handleDeploy = async () => {
     try {
       setDeployLoading(true)
-      await enablePlugin(web3Provider!, safeAddress, '0x2b18E7246d213676a0b9741fE860c7cC05D75cE2')
+      await enablePlugin(web3Provider!, safeAddress, '0x2b18E7246d213676a0b9741fE860c7cC05D75cE2') // TODO
+      setDeploySucceded(true)
     } catch (e) {
       setDeployError((e as Error).message)
     } finally {
@@ -69,8 +71,14 @@ export default function DeployPluginModal({ data, safeAddress, onClose }: Props)
       <ModalContent>
         <ModalHeader className="flex flex-col gap-1">{camelCaseToWord(data.plugin)}</ModalHeader>
         <ModalBody>
-          {deployError && <p className="text-red-500">{deployError}</p>}
-          {getPluginData()}
+          {deploySucceded ? (
+            <p className="text-green-500">Plugin deployed successfully! 🥳</p>
+          ) : (
+            <>
+              {deployError && <p className="text-red-500">{deployError}</p>}
+              {getPluginData()}
+            </>
+          )}
         </ModalBody>
         <ModalFooter>
           <Button color="danger" variant="light" onPress={onClose}>
