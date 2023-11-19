@@ -1,3 +1,9 @@
+Our dApp leverages the ERC-4337 specification to provide users with highly customizable, no-code smart wallets. We've developed reliable modules with specialized logic, allowing users to assemble their desired wallet effortlessly. These modules are built using Safe plugins, enabling the integration of multiple plugins within a single smart wallet.
+
+For an intuitive setup experience, our modules are configured through a conversational interface powered by the OpenAI API. It's important to note that while the AI assists in selecting and applying plugins and parameters, it does not generate code. We prioritize reliability and trustworthiness in our codebase, hence our decision to manually craft the plugins, with the AI primarily assisting with plugin suggestions rather than plugin generation.
+
+The client-side of our application is built using Next.js, and the Safe SDK for Account Abstraction. Wallet connectivity is facilitated by Web3Auth, which incorporates social authentication for enhanced access and security.
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
@@ -6,12 +12,6 @@ First, run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
@@ -20,17 +20,8 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-## Learn More
+## Front end and design
 
-To learn more about Next.js, take a look at the following resources:
+An extensive detail of the design roadmap can be found [here](https://www.figma.com/file/PknHeh0O0sEvKpYRMhJ0QR/Kandinsky---ETH-Global-Hackathon?type=design&node-id=13%3A1991&mode=design&t=G1llCpCXW0oiCect-1)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- NextJS Docs can be found [here](https://nextjs.org/docs)
