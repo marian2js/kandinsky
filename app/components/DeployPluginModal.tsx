@@ -23,7 +23,7 @@ export default function DeployPluginModal({ data, safeAddress, onClose }: Props)
   const handleDeploy = async () => {
     try {
       setDeployLoading(true)
-      await enablePlugin(web3Provider!, safeAddress, '0x2b18E7246d213676a0b9741fE860c7cC05D75cE2') // TODO
+      await enablePlugin(chain!, web3Provider!, safeAddress, '0xEfF3Db4aa94D9124516BCf91Df6CA1Ec8f9d2404')
       setDeploySucceded(true)
     } catch (e) {
       setDeployError((e as Error).message)
@@ -84,9 +84,11 @@ export default function DeployPluginModal({ data, safeAddress, onClose }: Props)
           <Button color="danger" variant="light" onPress={onClose}>
             Close
           </Button>
-          <Button color="primary" onPress={handleDeploy} isLoading={deployLoading}>
-            Deploy
-          </Button>
+          {!deploySucceded && (
+            <Button color="primary" onPress={handleDeploy} isLoading={deployLoading}>
+              Deploy
+            </Button>
+          )}
         </ModalFooter>
       </ModalContent>
     </Modal>
