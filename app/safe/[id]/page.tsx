@@ -126,7 +126,7 @@ export default function SafePage({ params }: { params: { id: string } }) {
             </a>
           </div>
         </div>
-        {!!plugins?.length && (
+        {/* {!!plugins?.length && (
           <div className="mt-8 text-center">
             <strong>Enabled Plugins:</strong>
             {plugins.map((plugin, i) => (
@@ -141,7 +141,7 @@ export default function SafePage({ params }: { params: { id: string } }) {
               </div>
             ))}
           </div>
-        )}
+        )} */}
         <div className="mt-8">
           <div className="mt-2">
             {messages.map((message, index) => (
