@@ -25,3 +25,7 @@ This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-opti
 An extensive detail of the design roadmap can be found [here](https://www.figma.com/file/PknHeh0O0sEvKpYRMhJ0QR/Kandinsky---ETH-Global-Hackathon?type=design&node-id=13%3A1991&mode=design&t=G1llCpCXW0oiCect-1)
 
 - NextJS Docs can be found [here](https://nextjs.org/docs)
+
+## Foundry
+
+For deploying the contracts, go into the `contracts` folder to read the `Foundry` commands
