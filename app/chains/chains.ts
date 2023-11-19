@@ -23,6 +23,7 @@ export const goerliChain: Chain = {
   transactionServiceUrl: 'https://safe-transaction-goerli.safe.global',
   isStripePaymentsEnabled: false,
   managerAddress: '0xAbd9769A78Ee63632A4fb603D85F63b8D3596DF9',
+  recoveryPluginAddress: '0xEfF3Db4aa94D9124516BCf91Df6CA1Ec8f9d2404',
 }
 
 export const mainnetChain: Chain = {

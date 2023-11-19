@@ -1,6 +1,7 @@
 import Safe, { EthersAdapter } from '@safe-global/protocol-kit'
 import { ethers } from 'ethers'
 import MANAGER_ABI from '../abis/manager.json'
+import RECOVERY_ABI from '../abis/recovery-plugin.json'
 import Chain from '../models/chain'
 
 export interface PluginMetadata {
@@ -62,6 +63,11 @@ export const enablePlugin = async (
 export const getManager = async (web3Provider: ethers.providers.Web3Provider, chain: Chain) => {
   const signer = web3Provider.getSigner()
   return new ethers.Contract(chain.managerAddress!, MANAGER_ABI, signer)
+}
+
+export const getRecoveryPlugin = async (web3Provider: ethers.providers.Web3Provider, chain: Chain) => {
+  const signer = web3Provider.getSigner()
+  return new ethers.Contract(chain.recoveryPluginAddress!, RECOVERY_ABI, signer)
 }
 
 export const isPluginEnabled = async (

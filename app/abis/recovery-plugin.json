@@ -1,0 +1,17 @@
+[
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "_recoverers",
+        "type": "address[]"
+      }
+    ],
+    "name": "addRecoverers",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

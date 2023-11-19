@@ -1,6 +1,6 @@
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react'
 import { useMemo, useState } from 'react'
-import { enablePlugin } from '../contracts/plugin.contract'
+import { enablePlugin, getRecoveryPlugin } from '../contracts/plugin.contract'
 import { DeadManSwitchProps, ResponseWithPlugin, SocialRecoveryProps } from '../models/plugins'
 import { useAccountAbstraction } from '../store/accountAbstractionContext'
 import camelCaseToWord from '../utils/camelCaseToWord'
@@ -23,7 +23,16 @@ export default function DeployPluginModal({ data, safeAddress, onClose }: Props)
   const handleDeploy = async () => {
     try {
       setDeployLoading(true)
-      await enablePlugin(chain!, web3Provider!, safeAddress, '0xEfF3Db4aa94D9124516BCf91Df6CA1Ec8f9d2404')
+      await enablePlugin(chain!, web3Provider!, safeAddress, chain?.recoveryPluginAddress!)
+      switch (data.plugin) {
+        case 'socialRecovery':
+          const socialRecoveryData = data.parameters as SocialRecoveryProps
+          const recoveryPlugin = await getRecoveryPlugin(web3Provider!, chain!)
+          await recoveryPlugin.addRecoverers(socialRecoveryData.contacts)
+          break
+        case 'deadManSwitch':
+        // TODO
+      }
       setDeploySucceded(true)
     } catch (e) {
       setDeployError((e as Error).message)
